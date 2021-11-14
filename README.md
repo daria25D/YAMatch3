@@ -5,4 +5,5 @@ Choose tiles by clicking on them with left mouse button.
 
 Reset field by clicking on reset button with left mouse button.
 
+
 ![Screenshot](./images/game.png?raw=true)
