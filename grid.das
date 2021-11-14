@@ -15,7 +15,7 @@ enum Colors
 
 struct Cell
     coord: int2
-    color: uint
+    color: Colors
     idx:  int2
     selected: bool
 
@@ -37,9 +37,9 @@ def init_colors()
     for c in each_enum(Colors YELLOW)
         push(colors, c)
 
-def get_random_color()
-    let random_idx = random_int(seed) % 5
-    return uint(colors[random_idx])
+def get_random_color(col: array<Colors>)
+    let random_idx = random_int(seed) % length(col)
+    return col[random_idx]
 
 def init_grid()
     grid.cells |> resize(GRID_SIZE)
@@ -47,10 +47,22 @@ def init_grid()
         c |> resize(GRID_SIZE)
 
 def create_cells()
+    var previousLeft: Colors[GRID_SIZE]
+    var previousBottom: Colors
     for i in range(GRID_SIZE)
-        for j in range(GRID_SIZE)
+        for j_r in range(GRID_SIZE)
+            let j = GRID_SIZE - j_r - 1
             grid.cells[i][j].coord = start_pos + int2(i * CELL_SIZE, j * CELL_SIZE)
-            grid.cells[i][j].color = get_random_color()
+            var possibleColors := colors
+            var idx_to_be_removed = find_index(possibleColors, previousLeft[j])
+            if idx_to_be_removed != -1
+                possibleColors |> erase(idx_to_be_removed)
+            idx_to_be_removed = find_index(possibleColors, previousBottom)
+            if idx_to_be_removed != -1
+                possibleColors |> erase(idx_to_be_removed)
+            grid.cells[i][j].color = get_random_color(possibleColors)
+            previousLeft[j] = grid.cells[i][j].color
+            previousBottom = grid.cells[i][j].color
             grid.cells[i][j].idx = int2(i, j)
             grid.cells[i][j].selected = false
 
@@ -79,5 +91,5 @@ def draw_cells()
                 grid.cells[i][j].coord.x + (CELL_SIZE-TILE_SIZE)/2,
                 grid.cells[i][j].coord.y + (CELL_SIZE-TILE_SIZE)/2,
                 TILE_SIZE, TILE_SIZE,
-                grid.cells[i][j].color
+                uint(grid.cells[i][j].color)
             )
