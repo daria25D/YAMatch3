@@ -1,4 +1,5 @@
 require daslib/media
+require grid
 // options debugger            // uncomment for debug in VS Code
 // require daslib/debug        // uncomment for debug in VS Code
 
@@ -7,6 +8,9 @@ require daslib/media
 [export]
 def initialize
     set_window_title("YetAnotherMatch3")
+    init_start_pos()
+    init_grid()
+    init_colors()
     return
 
 // this function is called to update game data,
@@ -21,4 +25,5 @@ def act(dt: float)
 // you can draw anything in this function
 [export]
 def draw
+    draw_grid()
     return
