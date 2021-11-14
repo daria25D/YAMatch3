@@ -10,6 +10,7 @@ def init_start_pos()
     start_pos.y = get_screen_height() / 2 - GRID_SIZE / 2 * CELL_SIZE
 
 def init_grid()
+    randomize_seed(seed)
     grid.isShifting = false
     grid.cells |> resize(GRID_SIZE)
     for c in grid.cells
