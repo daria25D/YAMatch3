@@ -24,9 +24,14 @@ def initialize
 def act(dt: float)
     if get_key(VK_ESCAPE)
         schedule_quit_game()
+    let pos = get_mouse_position()
+    let over_reset = check_if_hover_on_reset_btn(pos)
     if get_mouse_button_down(MB_LEFT)
-        let pos = get_mouse_position()
-        select_and_swap_tiles(pos)
+        if over_reset
+            create_cells()
+            reset_scoring()
+        else
+            select_and_swap_tiles(pos)
 
     find_removed_tiles()
     return
@@ -37,5 +42,5 @@ def act(dt: float)
 def draw
     draw_grid()
     draw_cells()
-    draw_scoring()
+    draw_text()
     return
