@@ -1,5 +1,6 @@
 require daslib/media
 require colors
+require images
 require grid
 require process_match
 require ui
@@ -13,6 +14,7 @@ def initialize
     set_window_title("YetAnotherMatch3")
     init_start_pos()
     init_colors()
+    init_images()
     init_grid()
     create_cells()
     reset_scoring()
@@ -40,6 +42,7 @@ def act(dt: float)
 // you can draw anything in this function
 [export]
 def draw
+    fill_rect(0, 0, get_screen_width(), get_screen_height(), 0x4056A7)
     draw_grid()
     draw_cells()
     draw_text()

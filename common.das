@@ -2,8 +2,8 @@ require daslib/media
 
 let
     GRID_SIZE = 10
-    CELL_SIZE = 40
-    TILE_SIZE = 32
+    CELL_SIZE = 50
+    TILE_SIZE = 48
     GRID_COLOR = 0xFFFFFF
 
 enum Colors

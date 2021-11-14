@@ -1,6 +1,7 @@
 require daslib/media
 require common
 require colors
+require images
 require process_match
 require ui
 
@@ -108,10 +109,17 @@ def draw_grid()
 def draw_cells()
     for i in range(GRID_SIZE)
         for j in range(GRID_SIZE)
-            let color = grid.cells[i][j].selected ? uint(grid.cells[i][j].color) + 0x242424 : uint(grid.cells[i][j].color)
-            fill_rect(
-                grid.cells[i][j].coord.x + (CELL_SIZE-TILE_SIZE)/2,
-                grid.cells[i][j].coord.y + (CELL_SIZE-TILE_SIZE)/2,
-                TILE_SIZE, TILE_SIZE,
-                color
-            )
+            if grid.cells[i][j].color == Colors BLACK
+                fill_rect(
+                    grid.cells[i][j].coord.x + 1,
+                    grid.cells[i][j].coord.y + 1,
+                    TILE_SIZE, TILE_SIZE,
+                    uint(Colors BLACK)
+                )
+            else
+                var cur_image := color_image_acc[grid.cells[i][j].color]
+                cur_image |> premultiply_alpha()
+                cur_image |> draw_image(float(grid.cells[i][j].coord.x + 1), float(grid.cells[i][j].coord.y + 1), 0xFFFFFF, float(TILE_SIZE))
+                if grid.cells[i][j].selected
+                    rect(grid.cells[i][j].coord.x + 1, grid.cells[i][j].coord.y + 1, TILE_SIZE, TILE_SIZE, 0xFFFF00)
+                delete cur_image
