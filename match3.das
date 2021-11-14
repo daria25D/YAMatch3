@@ -9,8 +9,9 @@ require grid
 def initialize
     set_window_title("YetAnotherMatch3")
     init_start_pos()
-    init_grid()
     init_colors()
+    init_grid()
+    create_cells()
     return
 
 // this function is called to update game data,
@@ -26,4 +27,5 @@ def act(dt: float)
 [export]
 def draw
     draw_grid()
+    draw_cells()
     return

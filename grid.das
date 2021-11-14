@@ -17,6 +17,7 @@ struct Cell
     coord: int2
     color: uint
     idx:  int2
+    selected: bool
 
 
 struct Grid
@@ -45,6 +46,14 @@ def init_grid()
     for c in grid.cells
         c |> resize(GRID_SIZE)
 
+def create_cells()
+    for i in range(GRID_SIZE)
+        for j in range(GRID_SIZE)
+            grid.cells[i][j].coord = start_pos + int2(i * CELL_SIZE, j * CELL_SIZE)
+            grid.cells[i][j].color = get_random_color()
+            grid.cells[i][j].idx = int2(i, j)
+            grid.cells[i][j].selected = false
+
 def draw_grid()
     for i in range(GRID_SIZE+1)
         line(
@@ -62,3 +71,13 @@ def draw_grid()
             start_pos.y + GRID_SIZE * CELL_SIZE,
             GRID_COLOR
         )
+
+def draw_cells()
+    for i in range(GRID_SIZE)
+        for j in range(GRID_SIZE)
+            fill_rect(
+                grid.cells[i][j].coord.x + (CELL_SIZE-TILE_SIZE)/2,
+                grid.cells[i][j].coord.y + (CELL_SIZE-TILE_SIZE)/2,
+                TILE_SIZE, TILE_SIZE,
+                grid.cells[i][j].color
+            )
