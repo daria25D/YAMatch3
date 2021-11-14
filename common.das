@@ -5,6 +5,7 @@ let
     CELL_SIZE = 50
     TILE_SIZE = 48
     GRID_COLOR = 0xFFFFFF
+    LEVELS = [[int2 int2(50, 17); int2(60, 18); int2(70, 19); int2(80, 20), int2(90, 21)]]
 
 enum Colors
     YELLOW = 0xD3D305
@@ -33,3 +34,6 @@ var
     prev_selected: int2
     score: int
     moves_cnt: int
+    level: int = 0
+    show_success_screen: bool = false
+    show_losing_screen: bool = false

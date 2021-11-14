@@ -4,7 +4,7 @@ require colors
 require ui
 
 let
-    WAIT_TIME = 0.3
+    WAIT_TIME = 0.2
 
 var
     match_found: bool
