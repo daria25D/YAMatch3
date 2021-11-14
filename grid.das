@@ -2,7 +2,7 @@ require daslib/media
 require common
 require colors
 require process_match
-require score
+require ui
 
 
 def init_start_pos()

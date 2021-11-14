@@ -1,7 +1,7 @@
 require daslib/media
 require common
 require colors
-require score
+require ui
 
 var
     match_found: bool
