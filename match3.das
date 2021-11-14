@@ -22,7 +22,7 @@ def act(dt: float)
         schedule_quit_game()
     if get_mouse_button_down(MB_LEFT)
         let pos = get_mouse_position()
-        select_tile(pos)
+        select_and_swap_tiles(pos)
     return
 
 // this function will be called every frame after 'act',

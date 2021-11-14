@@ -29,7 +29,7 @@ var
     colors: array<Colors>
     grid: Grid
     seed = int4(123, 124, 3978, 123)
-    previousSelectedCoords: int2
+    previousSelected: int2
 
 def init_start_pos()
     start_pos.x = get_screen_width() / 2 - GRID_SIZE / 2 * CELL_SIZE
@@ -50,7 +50,7 @@ def init_grid()
         c |> resize(GRID_SIZE)
 
 def create_cells()
-    previousSelectedCoords = int2(-1,-1)
+    previousSelected = int2(-1,-1)
     var previousLeft: Colors[GRID_SIZE]
     var previousBottom: Colors
     for i in range(GRID_SIZE)
@@ -76,19 +76,43 @@ def check_if_can_select_cell(i: int; j: int)
 def get_selected_tile_coords(pos: float2)
     let i = (int(pos.x) - start_pos.x) / CELL_SIZE
     let j = (int(pos.y) - start_pos.y) / CELL_SIZE
-    debug(int2(i,j))
-    let can_select = check_if_can_select_cell(i, j)
-    return can_select ? int2(i, j) : int2(-1,-1)
+    return int2(i, j)
 
-def select_tile(pos: float2)
+def select_and_swap_tiles(pos: float2)
     let selected = get_selected_tile_coords(pos)
+    if !check_if_can_select_cell(selected.x, selected.y)
+        return
     if grid.cells[selected.x][selected.y].selected
         grid.cells[selected.x][selected.y].selected = false
+        previousSelected = int2(-1,-1)
     else
-        if previousSelectedCoords.x == -1 // was not selected yet
+        if previousSelected.x == -1 // was not selected yet
             grid.cells[selected.x][selected.y].selected = true
+            previousSelected = grid.cells[selected.x][selected.y].idx
         else
-            grid.cells[previousSelectedCoords.x][previousSelectedCoords.y].selected = false
+            if check_is_neighbour(grid.cells[selected.x][selected.y].idx, grid.cells[previousSelected.x][previousSelected.y].idx)
+                swap_tiles(grid.cells[selected.x][selected.y], grid.cells[previousSelected.x][previousSelected.y])
+                grid.cells[previousSelected.x][previousSelected.y].selected = false
+                previousSelected = int2(-1,-1)
+            else
+                grid.cells[selected.x][selected.y].selected = true
+                grid.cells[previousSelected.x][previousSelected.y].selected = false
+                previousSelected = grid.cells[selected.x][selected.y].idx
+
+def swap_tiles(var c1: Cell; var c2: Cell)
+    if c1.color == c2.color
+        return
+    var swap_color = c1.color
+    c1.color = c2.color
+    c2.color = swap_color
+
+def check_is_neighbour(c1_idx: int2; c2_idx: int2)
+    var is_neighbour = false
+    if c1_idx.x == c2_idx.x && (c1_idx.y == c2_idx.y + 1 || c1_idx.y == c2_idx.y - 1)
+        is_neighbour = true
+    elif c1_idx.y == c2_idx.y && (c1_idx.x == c2_idx.x + 1 || c1_idx.x == c2_idx.x - 1)
+        is_neighbour = true
+    return is_neighbour
 
 def draw_grid()
     for i in range(GRID_SIZE+1)
@@ -111,7 +135,7 @@ def draw_grid()
 def draw_cells()
     for i in range(GRID_SIZE)
         for j in range(GRID_SIZE)
-            let color = grid.cells[i][j].selected ? uint(grid.cells[i][j].color) + 0x222222 : uint(grid.cells[i][j].color)
+            let color = grid.cells[i][j].selected ? uint(grid.cells[i][j].color) + 0x242424 : uint(grid.cells[i][j].color)
             fill_rect(
                 grid.cells[i][j].coord.x + (CELL_SIZE-TILE_SIZE)/2,
                 grid.cells[i][j].coord.y + (CELL_SIZE-TILE_SIZE)/2,
