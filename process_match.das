@@ -1,6 +1,7 @@
 require daslib/media
 require common
 require colors
+require score
 
 var
     match_found: bool
@@ -30,6 +31,7 @@ def clear_matching_tiles(cell: Cell; dirs: int2[2])
         for m in matchingTiles
             grid.cells[m.idx.x][m.idx.y].color = Colors BLACK
         match_found = true
+        update_score(length(matchingTiles) + 1)
 
 def clear_all_matches(var cell: Cell)
     was_match = false

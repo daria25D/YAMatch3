@@ -31,3 +31,5 @@ var
     grid: Grid
     seed = int4(123, 124, 3978, 123)
     prev_selected: int2
+    score: int
+    moves_cnt: int

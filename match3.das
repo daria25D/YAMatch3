@@ -2,6 +2,7 @@ require daslib/media
 require colors
 require grid
 require process_match
+require score
 options debugger            // uncomment for debug in VS Code
 require daslib/debug        // uncomment for debug in VS Code
 
@@ -14,6 +15,7 @@ def initialize
     init_colors()
     init_grid()
     create_cells()
+    reset_scoring()
     return
 
 // this function is called to update game data,
@@ -35,4 +37,5 @@ def act(dt: float)
 def draw
     draw_grid()
     draw_cells()
+    draw_scoring()
     return

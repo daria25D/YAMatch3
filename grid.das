@@ -2,6 +2,7 @@ require daslib/media
 require common
 require colors
 require process_match
+require score
 
 
 def init_start_pos()
@@ -62,6 +63,8 @@ def select_and_swap_tiles(pos: float2)
                 was_match_cur = was_match_cur || was_match
                 if !was_match_cur
                     swap_tiles(grid.cells[selected.x][selected.y], grid.cells[prev_selected.x][prev_selected.y])
+                else
+                    update_moves_cnt()
                 prev_selected = int2(-1,-1)
             else
                 grid.cells[selected.x][selected.y].selected = true
