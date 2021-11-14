@@ -1,4 +1,5 @@
 require daslib/media
+require colors
 require grid
 options debugger            // uncomment for debug in VS Code
 require daslib/debug        // uncomment for debug in VS Code

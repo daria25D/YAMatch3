@@ -1,21 +1,12 @@
 require daslib/media
 require common
+require colors
 require process_match
 
 
 def init_start_pos()
     start_pos.x = get_screen_width() / 2 - GRID_SIZE / 2 * CELL_SIZE
     start_pos.y = get_screen_height() / 2 - GRID_SIZE / 2 * CELL_SIZE
-
-def init_colors()
-    for c in each_enum(Colors YELLOW)
-        if c == Colors BLACK
-            break
-        push(colors, c)
-
-def get_random_color(col: array<Colors>)
-    let random_idx = random_int(seed) % length(col)
-    return col[random_idx]
 
 def init_grid()
     grid.isShifting = false
@@ -67,6 +58,7 @@ def select_and_swap_tiles(pos: float2)
                 clear_all_matches(grid.cells[previousSelected.x][previousSelected.y])
                 grid.cells[previousSelected.x][previousSelected.y].selected = false
                 clear_all_matches(grid.cells[selected.x][selected.y])
+                find_removed_tiles()
                 previousSelected = int2(-1,-1)
             else
                 grid.cells[selected.x][selected.y].selected = true
