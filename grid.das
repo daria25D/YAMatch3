@@ -1,35 +1,7 @@
 require daslib/media
+require common
+require process_match
 
-let
-    GRID_SIZE = 10
-    CELL_SIZE = 40
-    TILE_SIZE = 32
-    GRID_COLOR = 0xFFFFFF
-
-enum Colors
-    YELLOW = 0xD3D305
-    RED    = 0xD40808
-    GREEN  = 0x059440
-    BLUE   = 0x10109C
-    PURPLE = 0x6E076E
-
-struct Cell
-    coord: int2
-    color: Colors
-    idx:  int2
-    selected: bool
-
-
-struct Grid
-    cells: array<array<Cell>>
-    isShifting: bool
-
-var
-    start_pos: int2
-    colors: array<Colors>
-    grid: Grid
-    seed = int4(123, 124, 3978, 123)
-    previousSelected: int2
 
 def init_start_pos()
     start_pos.x = get_screen_width() / 2 - GRID_SIZE / 2 * CELL_SIZE
@@ -37,6 +9,8 @@ def init_start_pos()
 
 def init_colors()
     for c in each_enum(Colors YELLOW)
+        if c == Colors BLACK
+            break
         push(colors, c)
 
 def get_random_color(col: array<Colors>)
@@ -70,9 +44,6 @@ def create_cells()
             grid.cells[i][j].idx = int2(i, j)
             grid.cells[i][j].selected = false
 
-def check_if_can_select_cell(i: int; j: int)
-    return (i >= 0 && i < GRID_SIZE && j >= 0 && j < GRID_SIZE)
-
 def get_selected_tile_coords(pos: float2)
     let i = (int(pos.x) - start_pos.x) / CELL_SIZE
     let j = (int(pos.y) - start_pos.y) / CELL_SIZE
@@ -92,7 +63,10 @@ def select_and_swap_tiles(pos: float2)
         else
             if check_is_neighbour(grid.cells[selected.x][selected.y].idx, grid.cells[previousSelected.x][previousSelected.y].idx)
                 swap_tiles(grid.cells[selected.x][selected.y], grid.cells[previousSelected.x][previousSelected.y])
+
+                clear_all_matches(grid.cells[previousSelected.x][previousSelected.y])
                 grid.cells[previousSelected.x][previousSelected.y].selected = false
+                clear_all_matches(grid.cells[selected.x][selected.y])
                 previousSelected = int2(-1,-1)
             else
                 grid.cells[selected.x][selected.y].selected = true
