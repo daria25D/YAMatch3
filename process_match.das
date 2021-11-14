@@ -3,9 +3,15 @@ require common
 require colors
 require ui
 
+let
+    WAIT_TIME = 0.3
+
 var
     match_found: bool
     was_match: bool
+    time_to_fill: float
+    need_to_shift: bool
+    wait_to_shift: bool = true
 
 def check_if_can_select_cell(i: int; j: int)
     return (i >= 0 && i < GRID_SIZE && j >= 0 && j < GRID_SIZE)
@@ -44,17 +50,27 @@ def clear_all_matches(var cell: Cell)
         was_match = true
         match_found = false
 
-def find_removed_tiles()
-    for i_r in range(GRID_SIZE)
+def find_removed_tiles(dt: float)
+    time_to_fill = max(time_to_fill - dt, -0.1)
+    if time_to_fill < 0.0
+        wait_to_shift = !need_to_shift
+        need_to_shift = false
+    else
+        return
+    for i in range(GRID_SIZE)
         for j_r in range(GRID_SIZE)
-            let i = GRID_SIZE - i_r - 1
             let j = GRID_SIZE - j_r - 1
             if grid.cells[i][j].color == Colors BLACK
-                shift_tiles_down(i, j)
+                if !wait_to_shift
+                    shift_tiles_down(i, j)
+                need_to_shift = true
+            if need_to_shift
+                wait_to_shift = true
+                time_to_fill = WAIT_TIME
+                return
 
-    for i_r in range(GRID_SIZE)
+    for i in range(GRID_SIZE)
         for j_r in range(GRID_SIZE)
-            let i = GRID_SIZE - i_r - 1
             let j = GRID_SIZE - j_r - 1
             clear_all_matches(grid.cells[i][j])
 
@@ -74,7 +90,6 @@ def shift_tiles_down(i: int; j_start: int)
     grid.isShifting = false
 
 def fill_missing_tiles(i: int; j: int)
-    debug(int2(i,j))
     var possibleColors := colors
     var idx_to_be_removed: int
     if i > 0

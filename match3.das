@@ -33,7 +33,7 @@ def act(dt: float)
         else
             select_and_swap_tiles(pos)
 
-    find_removed_tiles()
+    find_removed_tiles(dt)
     return
 
 // this function will be called every frame after 'act',
