@@ -22,12 +22,14 @@ struct Cell
 
 struct Grid
     cells: array<array<Cell>>
+    isShifting: bool
 
 var
     start_pos: int2
     colors: array<Colors>
     grid: Grid
     seed = int4(123, 124, 3978, 123)
+    previousSelectedCoords: int2
 
 def init_start_pos()
     start_pos.x = get_screen_width() / 2 - GRID_SIZE / 2 * CELL_SIZE
@@ -42,11 +44,13 @@ def get_random_color(col: array<Colors>)
     return col[random_idx]
 
 def init_grid()
+    grid.isShifting = false
     grid.cells |> resize(GRID_SIZE)
     for c in grid.cells
         c |> resize(GRID_SIZE)
 
 def create_cells()
+    previousSelectedCoords = int2(-1,-1)
     var previousLeft: Colors[GRID_SIZE]
     var previousBottom: Colors
     for i in range(GRID_SIZE)
@@ -65,6 +69,26 @@ def create_cells()
             previousBottom = grid.cells[i][j].color
             grid.cells[i][j].idx = int2(i, j)
             grid.cells[i][j].selected = false
+
+def check_if_can_select_cell(i: int; j: int)
+    return (i >= 0 && i < GRID_SIZE && j >= 0 && j < GRID_SIZE)
+
+def get_selected_tile_coords(pos: float2)
+    let i = (int(pos.x) - start_pos.x) / CELL_SIZE
+    let j = (int(pos.y) - start_pos.y) / CELL_SIZE
+    debug(int2(i,j))
+    let can_select = check_if_can_select_cell(i, j)
+    return can_select ? int2(i, j) : int2(-1,-1)
+
+def select_tile(pos: float2)
+    let selected = get_selected_tile_coords(pos)
+    if grid.cells[selected.x][selected.y].selected
+        grid.cells[selected.x][selected.y].selected = false
+    else
+        if previousSelectedCoords.x == -1 // was not selected yet
+            grid.cells[selected.x][selected.y].selected = true
+        else
+            grid.cells[previousSelectedCoords.x][previousSelectedCoords.y].selected = false
 
 def draw_grid()
     for i in range(GRID_SIZE+1)
@@ -87,9 +111,10 @@ def draw_grid()
 def draw_cells()
     for i in range(GRID_SIZE)
         for j in range(GRID_SIZE)
+            let color = grid.cells[i][j].selected ? uint(grid.cells[i][j].color) + 0x222222 : uint(grid.cells[i][j].color)
             fill_rect(
                 grid.cells[i][j].coord.x + (CELL_SIZE-TILE_SIZE)/2,
                 grid.cells[i][j].coord.y + (CELL_SIZE-TILE_SIZE)/2,
                 TILE_SIZE, TILE_SIZE,
-                uint(grid.cells[i][j].color)
+                color
             )

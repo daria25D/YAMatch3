@@ -1,7 +1,7 @@
 require daslib/media
 require grid
-// options debugger            // uncomment for debug in VS Code
-// require daslib/debug        // uncomment for debug in VS Code
+options debugger            // uncomment for debug in VS Code
+require daslib/debug        // uncomment for debug in VS Code
 
 
 // 'initialize' runs once when game starts and every hot-reload
@@ -20,6 +20,9 @@ def initialize
 def act(dt: float)
     if get_key(VK_ESCAPE)
         schedule_quit_game()
+    if get_mouse_button_down(MB_LEFT)
+        let pos = get_mouse_position()
+        select_tile(pos)
     return
 
 // this function will be called every frame after 'act',
