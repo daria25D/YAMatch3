@@ -15,7 +15,7 @@ def init_grid()
         c |> resize(GRID_SIZE)
 
 def create_cells()
-    previousSelected = int2(-1,-1)
+    prev_selected = int2(-1,-1)
     var previousLeft: Colors[GRID_SIZE]
     var previousBottom: Colors
     for i in range(GRID_SIZE)
@@ -46,24 +46,27 @@ def select_and_swap_tiles(pos: float2)
         return
     if grid.cells[selected.x][selected.y].selected
         grid.cells[selected.x][selected.y].selected = false
-        previousSelected = int2(-1,-1)
+        prev_selected = int2(-1,-1)
     else
-        if previousSelected.x == -1 // was not selected yet
+        if prev_selected.x == -1 // was not selected yet
             grid.cells[selected.x][selected.y].selected = true
-            previousSelected = grid.cells[selected.x][selected.y].idx
+            prev_selected = grid.cells[selected.x][selected.y].idx
         else
-            if check_is_neighbour(grid.cells[selected.x][selected.y].idx, grid.cells[previousSelected.x][previousSelected.y].idx)
-                swap_tiles(grid.cells[selected.x][selected.y], grid.cells[previousSelected.x][previousSelected.y])
+            if check_is_neighbour(grid.cells[selected.x][selected.y].idx, grid.cells[prev_selected.x][prev_selected.y].idx)
+                swap_tiles(grid.cells[selected.x][selected.y], grid.cells[prev_selected.x][prev_selected.y])
 
-                clear_all_matches(grid.cells[previousSelected.x][previousSelected.y])
-                grid.cells[previousSelected.x][previousSelected.y].selected = false
+                clear_all_matches(grid.cells[prev_selected.x][prev_selected.y])
+                var was_match_cur = was_match
+                grid.cells[prev_selected.x][prev_selected.y].selected = false
                 clear_all_matches(grid.cells[selected.x][selected.y])
-                find_removed_tiles()
-                previousSelected = int2(-1,-1)
+                was_match_cur = was_match_cur || was_match
+                if !was_match_cur
+                    swap_tiles(grid.cells[selected.x][selected.y], grid.cells[prev_selected.x][prev_selected.y])
+                prev_selected = int2(-1,-1)
             else
                 grid.cells[selected.x][selected.y].selected = true
-                grid.cells[previousSelected.x][previousSelected.y].selected = false
-                previousSelected = grid.cells[selected.x][selected.y].idx
+                grid.cells[prev_selected.x][prev_selected.y].selected = false
+                prev_selected = grid.cells[selected.x][selected.y].idx
 
 def swap_tiles(var c1: Cell; var c2: Cell)
     if c1.color == c2.color

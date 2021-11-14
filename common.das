@@ -30,4 +30,4 @@ var
     colors: array<Colors>
     grid: Grid
     seed = int4(123, 124, 3978, 123)
-    previousSelected: int2
+    prev_selected: int2

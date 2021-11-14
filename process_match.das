@@ -4,6 +4,7 @@ require colors
 
 var
     match_found: bool
+    was_match: bool
 
 def check_if_can_select_cell(i: int; j: int)
     return (i >= 0 && i < GRID_SIZE && j >= 0 && j < GRID_SIZE)
@@ -11,7 +12,6 @@ def check_if_can_select_cell(i: int; j: int)
 def find_match(cell: Cell; dir: int2)
     var matchingTiles: array<Cell>
     var coord = cell.idx + dir
-    debug(coord)
     while check_if_can_select_cell(coord.x, coord.y)
         if cell.color == grid.cells[coord.x][coord.y].color
             matchingTiles |> push(grid.cells[coord.x][coord.y])
@@ -32,12 +32,14 @@ def clear_matching_tiles(cell: Cell; dirs: int2[2])
         match_found = true
 
 def clear_all_matches(var cell: Cell)
+    was_match = false
     if cell.color == Colors BLACK
         return
     clear_matching_tiles(cell, [[int2 int2(-1, 0); int2(1, 0)]])
     clear_matching_tiles(cell, [[int2 int2(0, -1); int2(0, 1)]])
     if match_found
         cell.color = Colors BLACK
+        was_match = true
         match_found = false
 
 def find_removed_tiles()
@@ -47,7 +49,12 @@ def find_removed_tiles()
             let j = GRID_SIZE - j_r - 1
             if grid.cells[i][j].color == Colors BLACK
                 shift_tiles_down(i, j)
-                break
+
+    for i_r in range(GRID_SIZE)
+        for j_r in range(GRID_SIZE)
+            let i = GRID_SIZE - i_r - 1
+            let j = GRID_SIZE - j_r - 1
+            clear_all_matches(grid.cells[i][j])
 
 def shift_tiles_down(i: int; j_start: int)
     grid.isShifting = true

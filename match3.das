@@ -1,6 +1,7 @@
 require daslib/media
 require colors
 require grid
+require process_match
 options debugger            // uncomment for debug in VS Code
 require daslib/debug        // uncomment for debug in VS Code
 
@@ -24,6 +25,8 @@ def act(dt: float)
     if get_mouse_button_down(MB_LEFT)
         let pos = get_mouse_position()
         select_and_swap_tiles(pos)
+
+    find_removed_tiles()
     return
 
 // this function will be called every frame after 'act',
